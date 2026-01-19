@@ -34,6 +34,8 @@ func setSet(s *state, cmd command) (string, error) {
 				set = "Beta"
 			case "AL", "Al":
 				set = "Arthurian Legends"
+			case "G":
+				set = "Gothic"
 				//add more at apropiate release
 			}
 

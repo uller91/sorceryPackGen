@@ -278,6 +278,10 @@ Available tags:
 			"Arthurian Legends"
 		d	
 			"Dragonlord" (can't be used at the moment since it consists of only unique cards)
+		g
+			"Gothic"
+		p
+			"Promotional" (can't be used at the moment)
 		"All" 
 			generates the pack from all the cards available in the DB. Expect pure lack of synergy. But it will be fun!
 		"Random" and anything else
@@ -304,10 +308,13 @@ Available tags:
 	Adds the possibility of the "foil" card in the pack.
 	In terms of this program, this tag adds 25% chance of one ordinary card to be "foil" of any rarity.
 
+-a
+	Adds the avatar cards as a first card in the pack.
+	The rarity of the avatar is random since the API doesn't hold this information anymore
 
-The following cards are excluded from generated packs:
+The following "Promotional" cards are excluded from generated packs:
 	Alpha: Relentless Crowd, Winter River, Erik's Curiosa
-	Beta: Spellslinger, Spire, Stream, Valley, Wasteland
+	Draft pack: Spellslinger, Spire, Stream, Valley, Wasteland
 	
 One additional thing to consider. AL set has a set of Unique Sir/Dame cards which are actually Elite in terms of rarity.
 Here they are considered to have Elite rarity. 
@@ -340,6 +347,9 @@ func handlerGenerate(s *state, cmd command) error {
 
 	//"foils" in the pack, tag -f
 	cardsInPack, _ = setFoil(cardsInPack, cmd)
+
+	//avatar in the pack, tag -a
+	cardsInPack, _ = setAvatar(cardsInPack, cmd)
 
 	//setting the number of packs
 	numberOfPacks, err := setNumber(cmd)

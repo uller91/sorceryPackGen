@@ -15,6 +15,7 @@ func setStandardPack() map[string]int {
 		"Exceptional": 3,
 		"Elite":       0,
 		"Unique":      0,
+		"Avatar":	   0,
 	}
 	//20% of unique
 	uniqueProbability, _ := rand.Int(rand.Reader, big.NewInt(int64(5)))

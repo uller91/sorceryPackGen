@@ -97,6 +97,7 @@ func getRandomCardsFromCollectionByRarity(s *state, collection []Card, cardsQuan
 	return randomCollection
 }
 
+/*
 func generateOnePack(s *state, setName string, cardsInPack map[string]int) error {
 	set, err := s.database.GetCardsBySet(context.Background(), setName)
 	if err != nil {
@@ -107,6 +108,7 @@ func generateOnePack(s *state, setName string, cardsInPack map[string]int) error
 	cardsExceptional := []Card{}
 	cardsElite := []Card{}
 	cardsUnique := []Card{}
+	cardsAvatar := []Card{}
 
 	for _, setCard := range set {
 		card, err := s.database.GetCard(context.Background(), setCard.CardID)
@@ -135,7 +137,10 @@ func generateOnePack(s *state, setName string, cardsInPack map[string]int) error
 				continue
 			}
 			cardsUnique = append(cardsUnique, cardClean)
+		case "": //avatar
+			cardsAvatar = append(cardsAvatar, cardClean)
 		default:
+			fmt.Println(cardClean.Rarity)
 			return errors.New("Unknown rarity was found!")
 		}
 	}
@@ -159,6 +164,7 @@ func generateOnePack(s *state, setName string, cardsInPack map[string]int) error
 
 	return nil
 }
+*/
 
 func generateMiltiplePacks(s *state, setName string, cardsInPack map[string]int, packsQuantity int) error {
 	set, err := s.database.GetCardsBySet(context.Background(), setName)
@@ -170,6 +176,7 @@ func generateMiltiplePacks(s *state, setName string, cardsInPack map[string]int,
 	cardsExceptional := []Card{}
 	cardsElite := []Card{}
 	cardsUnique := []Card{}
+	cardsAvatar := []Card{}
 
 	for _, setCard := range set {
 		card, err := s.database.GetCard(context.Background(), setCard.CardID)
@@ -198,6 +205,8 @@ func generateMiltiplePacks(s *state, setName string, cardsInPack map[string]int,
 				continue
 			}
 			cardsUnique = append(cardsUnique, cardClean)
+		case "": //avatar
+			cardsAvatar = append(cardsAvatar, cardClean)
 		default:
 			return errors.New("Unknown rarity was found!")
 		}
@@ -215,16 +224,19 @@ func generateMiltiplePacks(s *state, setName string, cardsInPack map[string]int,
 		draftedExceptional := map[string]int{}
 		draftedElite := map[string]int{}
 		draftedUnique := map[string]int{}
+		draftedAvatar := map[string]int{}
 
 		quantityOrdinary := 4
 		quantityExceptional := 3
 		quantityElite := 2
 		quantityUnique := 1
+		quantityAvatar := 1
 
 		packs := [][]Card{}
 
 		for i := 0; i < packsQuantity; i++ {
-			pack := getRandomCardsFromCollectionByRarity(s, cardsOrdinary, cardsInPack["Ordinary"], packsQuantity, quantityOrdinary, draftedOrdinary)
+			pack := getRandomCardsFromCollectionByRarity(s, cardsAvatar, cardsInPack["Avatar"], packsQuantity, quantityAvatar, draftedAvatar)
+			pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsOrdinary, cardsInPack["Ordinary"], packsQuantity, quantityOrdinary, draftedOrdinary)...)
 			pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsExceptional, cardsInPack["Exceptional"], packsQuantity, quantityExceptional, draftedExceptional)...)
 			pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsElite, cardsInPack["Elite"], packsQuantity, quantityElite, draftedElite)...)
 			pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsUnique, cardsInPack["Unique"], packsQuantity, quantityUnique, draftedUnique)...)
@@ -269,6 +281,7 @@ func generateMultiplePacksAll(s *state, cardsInPack map[string]int, packsQuantit
 	cardsExceptional := []Card{}
 	cardsElite := []Card{}
 	cardsUnique := []Card{}
+	cardsAvatar := []Card{}
 
 	for _, card := range cards {
 		sets, err := s.database.GetSetsByCard(context.Background(), card.ID)
@@ -304,27 +317,30 @@ func generateMultiplePacksAll(s *state, cardsInPack map[string]int, packsQuantit
 				continue
 			}
 			cardsUnique = append(cardsUnique, cardClean)
+		case "": //avatar
+			cardsAvatar = append(cardsAvatar, cardClean)
 		default:
 			return errors.New("Unknown rarity was found!")
 		}
 	}
 
-	//here
-
 	draftedOrdinary := map[string]int{}
 	draftedExceptional := map[string]int{}
 	draftedElite := map[string]int{}
 	draftedUnique := map[string]int{}
+	draftedAvatar := map[string]int{}
 
 	quantityOrdinary := 4
 	quantityExceptional := 3
 	quantityElite := 2
 	quantityUnique := 1
+	quantityAvatar := 1
 
 	packs := [][]Card{}
 
 	for i := 0; i < packsQuantity; i++ {
-		pack := getRandomCardsFromCollectionByRarity(s, cardsOrdinary, cardsInPack["Ordinary"], packsQuantity, quantityOrdinary, draftedOrdinary)
+		pack := getRandomCardsFromCollectionByRarity(s, cardsAvatar, cardsInPack["Avatar"], packsQuantity, quantityAvatar, draftedAvatar)
+		pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsOrdinary, cardsInPack["Ordinary"], packsQuantity, quantityOrdinary, draftedOrdinary)...)
 		pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsExceptional, cardsInPack["Exceptional"], packsQuantity, quantityExceptional, draftedExceptional)...)
 		pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsElite, cardsInPack["Elite"], packsQuantity, quantityElite, draftedElite)...)
 		pack = append(pack, getRandomCardsFromCollectionByRarity(s, cardsUnique, cardsInPack["Unique"], packsQuantity, quantityUnique, draftedUnique)...)
@@ -354,24 +370,10 @@ func generateMultiplePacksAll(s *state, cardsInPack map[string]int, packsQuantit
 		fmt.Println("")
 	}
 
-	//finish
-
-	/*
-		pack := getRandomCardsFromCollection(s, cardsOrdinary, cardsInPack["Ordinary"])
-		pack = append(pack, getRandomCardsFromCollection(s, cardsExceptional, cardsInPack["Exceptional"])...)
-		pack = append(pack, getRandomCardsFromCollection(s, cardsElite, cardsInPack["Elite"])...)
-		pack = append(pack, getRandomCardsFromCollection(s, cardsUnique, cardsInPack["Unique"])...)
-
-		fmt.Println("Random pack from all sets:")
-		fmt.Println("")
-
-		for _, card := range pack {
-			fmt.Printf("%-25v | %-10v | %-15v | %-10v\n", card.Name, card.Type, card.Rarity, card.Sets)
-		} */
-
 	return nil
 }
 
+/*
 func generateOnePackAll(s *state, cardsInPack map[string]int) error {
 	cards, err := s.database.GetAllCards(context.Background())
 	if err != nil {
@@ -436,3 +438,4 @@ func generateOnePackAll(s *state, cardsInPack map[string]int) error {
 
 	return nil
 }
+*/
